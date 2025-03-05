@@ -35,21 +35,27 @@ TCidade Ler_cidade(char* cidade, int id) {
 
 void Cidade_aleatoria(TCel** x, char* cidade[], int num_cidades) {
     char* copia_cidade[num_cidades];
+    int preechimento[num_cidades];
+    srand(time(NULL));
+
     for (int i = 0; i < num_cidades; i++) {
-        copia_cidade[i] = cidade[i];
+        preechimento[i] = 0;
     }
 
-    srand(time(NULL));
-    for (int i = num_cidades - 1; i > 0; i--) {
-        int j = rand() % (i + 1);
-        char* temp = copia_cidade[i];
-        copia_cidade[i] = copia_cidade[j];
-        copia_cidade[j] = temp;
+    for (int i = 0; i < num_cidades; i++) {
+        int posicao;
+        do {
+            posicao = rand() % num_cidades;
+        } while (preechimento[posicao]);
+
+        copia_cidade[posicao] = cidade[i];
+        preechimento[posicao] = 1;
     }
 
     for (int i = 0; i < num_cidades; i++) {
         Inserir(x, NULL, Ler_cidade(copia_cidade[i], i + 1));
     }
+
 }
 
 TCel* CriaNo(TCidade item) {
@@ -270,7 +276,6 @@ void InOrdem(TCel *x){
         InOrdem(x->dir);
     }
 }
-
 void PreOrdem(TCel *x){
     if(x != NULL){
         printf("[%d-", x->item.id);
@@ -279,11 +284,10 @@ void PreOrdem(TCel *x){
         PreOrdem(x->dir);
     }
 }
-
 void PosOrdem(TCel *x){
-     if(x != NULL){
-        PreOrdem(x->esq);
-        PreOrdem(x->dir);
+    if(x != NULL){
+        PosOrdem(x->esq);
+        PosOrdem(x->dir);
         printf("[%d-", x->item.id);
         printf("%s ] -> ", x->item.nome_cidade);
     }
@@ -295,14 +299,17 @@ int main() {
     TArvore arvore;
     arvore.raiz = NULL;
 
-    char *cidade[3] = {"Nova Era", "João Monlevade", "Ipatinga"};
+    char *cidade[] = {"Nova Era", "João Monlevade", "Ipatinga", "Belo Horizonte"};
     int num_cidade = sizeof(cidade) / sizeof(cidade[0]);
     Cidade_aleatoria(&arvore.raiz, cidade, num_cidade);
 
+    printf("In-Order: ");
     InOrdem(arvore.raiz);
     printf("\n");
+    printf("Pre-Order: ");
     PreOrdem(arvore.raiz);
     printf("\n");
+    printf("Pos-Order: ");
     PosOrdem(arvore.raiz);
 
 
