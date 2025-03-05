@@ -26,16 +26,21 @@ typedef struct arvore{
     TCel *raiz;
 }TArvore;
 
+void Cidade_aleatoria(TCel** x, char* cidade[], int num_cidades);
+TCidade Ler_cidade(char* cidade, int id);
+void Inserir(TCel **x, TCel *pai, TCidade item);
+
 TCidade Ler_cidade(char* cidade, int id) {
     TCidade c;
-    c.nome_cidade = strdup(cidade);
+    c.nome_cidade = cidade;
     c.id = id;
     return c;
 }
 
+
 void Cidade_aleatoria(TCel** x, char* cidade[], int num_cidades) {
     char* copia_cidade[num_cidades];
-    int preechimento[num_cidades];
+    int preechimento[num_cidades], aux;
     srand(time(NULL));
 
     for (int i = 0; i < num_cidades; i++) {
@@ -53,9 +58,9 @@ void Cidade_aleatoria(TCel** x, char* cidade[], int num_cidades) {
     }
 
     for (int i = 0; i < num_cidades; i++) {
-        Inserir(x, NULL, Ler_cidade(copia_cidade[i], i + 1));
+        aux = rand() % 101;
+        Inserir(x, NULL, Ler_cidade(copia_cidade[i], aux));
     }
-
 }
 
 TCel* CriaNo(TCidade item) {
@@ -271,15 +276,13 @@ void MergeSort(TCel *C, int n){
 void InOrdem(TCel *x){
     if(x != NULL){
         InOrdem(x->esq);
-        printf("[%d-", x->item.id);
-        printf("%s ] -> ", x->item.nome_cidade);
+        printf("[%d - %s] -> ", x->item.id, x->item.nome_cidade);
         InOrdem(x->dir);
     }
 }
 void PreOrdem(TCel *x){
     if(x != NULL){
-        printf("[%d-", x->item.id);
-        printf("%s ] -> ", x->item.nome_cidade);
+        printf("[%d - %s] -> ", x->item.id, x->item.nome_cidade);
         PreOrdem(x->esq);
         PreOrdem(x->dir);
     }
@@ -288,8 +291,7 @@ void PosOrdem(TCel *x){
     if(x != NULL){
         PosOrdem(x->esq);
         PosOrdem(x->dir);
-        printf("[%d-", x->item.id);
-        printf("%s ] -> ", x->item.nome_cidade);
+        printf("[%d - %s] -> ", x->item.id, x->item.nome_cidade);
     }
 }
 
@@ -299,15 +301,26 @@ int main() {
     TArvore arvore;
     arvore.raiz = NULL;
 
-    char *cidade[] = {"Nova Era", "João Monlevade", "Ipatinga", "Belo Horizonte"};
+    char *cidade[] = {"Nova Era", "João Monlevade", "Ipatinga", "Belo Horizonte", "Itabira"};
     int num_cidade = sizeof(cidade) / sizeof(cidade[0]);
     Cidade_aleatoria(&arvore.raiz, cidade, num_cidade);
 
-    printf("In-Order: ");
-    InOrdem(arvore.raiz);
-    printf("\n");
+/*
+    TCidade c1, c2, c3;
+    c1.id = 3;
+    c2.id = 2;
+    c3.id = 1;
+
+    Inserir(&arvore.raiz, NULL, c1);
+    Inserir(&arvore.raiz, NULL, c2);
+    Inserir(&arvore.raiz, NULL, c3);
+*/
+
     printf("Pre-Order: ");
     PreOrdem(arvore.raiz);
+    printf("\n");
+    printf("In-Order: ");
+    InOrdem(arvore.raiz);
     printf("\n");
     printf("Pos-Order: ");
     PosOrdem(arvore.raiz);
