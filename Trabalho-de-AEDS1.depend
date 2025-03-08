@@ -1,7 +1,9 @@
 # depslib dependency file v1.0
-1741208070 source:c:\users\túlio\documents\codeblocks\trabalho-de-aeds1\main.c
+1741464000 source:c:\users\túlio\documents\codeblocks\trabalho-de-aeds1\main.c
 	<stdio.h>
+	<string.h>
 	<stdlib.h>
 	<time.h>
 	<locale.h>
+	<stdbool.h>
 

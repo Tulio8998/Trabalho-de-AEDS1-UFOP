@@ -1,7 +1,9 @@
 #include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
 #include <time.h>
 #include <locale.h>
+#include <stdbool.h>
 
 typedef struct {
     int id;
@@ -40,7 +42,7 @@ TCidade Ler_cidade(char* cidade, int id) {
 
 void Cidade_aleatoria(TCel** x, char* cidade[], int num_cidades) {
     char* copia_cidade[num_cidades];
-    int preechimento[num_cidades], aux;
+    int preechimento[num_cidades], aux1[num_cidades], aux2, aux3 = 0, j = 0;;
     srand(time(NULL));
 
     for (int i = 0; i < num_cidades; i++) {
@@ -57,9 +59,21 @@ void Cidade_aleatoria(TCel** x, char* cidade[], int num_cidades) {
         preechimento[posicao] = 1;
     }
 
+    do {
+        aux1[j] = rand() % 101;
+        aux2 = 0;
+        for (int t = 0; t < aux3; t++) {
+            if (aux1[t] == aux1[j]) {
+                aux2 = 1;
+            }
+        }
+        if (aux2 == 0) {
+            j++;
+        }
+    } while (j < num_cidades);
+
     for (int i = 0; i < num_cidades; i++) {
-        aux = rand() % 101;
-        Inserir(x, NULL, Ler_cidade(copia_cidade[i], aux));
+        Inserir(x, NULL, Ler_cidade(copia_cidade[i], aux1[i]));
     }
 }
 
@@ -99,14 +113,13 @@ void Inserir(TCel **x, TCel *pai, TCidade item) {
     }
 }
 
-TCel *Pesqusiar(TCel *x, TCidade item){          //Pesquiso um ID de determinado valor
-    if((x == NULL) || (x->item.id == item.id))   // -> caso o valor de x seja nulo ou eu já tenha achado meu item, quebro o fluxo da função
-        return;
-    if(item.id < x->item.id){                    // -> caso o valor do ID desejado seja menor que X restrinjo o meu processo à arvore
-        Pesqusiar(x->esq, item);                 //   da esquerda e repito o processo até que ache o valor desejado
-    }
-    else if(item.id > x->item.id){               // -> caso o valor do ID desejado seja maior que X restrinjo o meu processo à arvore
-        Pesqusiar(x->dir, item);                 //   da direita e repito o processo até que ache o valor desejado
+TCel* Pesquisar(TCel *x, TCidade item){                 //Pesquisa um ID
+    if((x == NULL) || (x->item.id == item.id))          // -> caso o valor de x seja nulo ou eu já tenha achado meu item, quebro o fluxo da função
+        return x;
+    if(item.id < x->item.id){                           // -> caso o valor do ID desejado seja menor que X restrinjo o meu processo à arvore
+        return Pesquisar(x->esq, item);                 //   da esquerda e repito o processo até que ache o valor desejado
+    } else {                                            // -> caso o valor do ID desejado seja maior que X restrinjo o meu processo à arvore
+        return Pesquisar(x->dir, item);                 //   da direita e repito o processo até que ache o valor desejado
     }
 }
 
@@ -132,7 +145,7 @@ void Transplante(TArvore *arvore, TCel **u, TCel **v){
 }
 
 void Retirar (TArvore *arvore, TCel **z){
-    if(*z = NULL){
+    if(*z == NULL){
         printf("\n>>>＞ AVISO：NO \"z\" E´ NULO! ");
         return;
     }
@@ -142,7 +155,7 @@ void Retirar (TArvore *arvore, TCel **z){
         Transplante (arvore, z, &(*z)->esq);
     else{
         TCel *y = Minimo ((*z) ->dir);
-        if(y->pai = (*z)){
+        if(y->pai == (*z)){
             Transplante (arvore, &y, &y->dir);
             y->dir = (*z) ->dir;
             y ->dir->pai = y;
@@ -155,9 +168,18 @@ void Retirar (TArvore *arvore, TCel **z){
     *z = NULL;
 }
 
-// Métodos de Seleção
-void  BubbleSort(TCel *C, int n){
-
+void Bubblesort(TCidade C[], int n){
+ TCidade x;
+ int i,j;
+ for(i = 1; i < n; i++){
+  for(j = n; j > i; j--){
+     if(C[j].id < C[j - 1].id){
+        x = C[j];
+        C[j] = C[j - 1];
+        C[j - 1] = x;
+     }
+  }
+ }
 }
 
 void SelectionSort(TCidade*C, int n){
@@ -259,7 +281,7 @@ int Particao(TCidade *C, int p, int r){
     }
 }
 
-void QuickSort(TCel *C, int p, int r){
+void QuickSort(TCidade *C, int p, int r){
     if( p < r){
         int q = Particao(C, p, r);
         QuickSort(C, p, q - 1);
@@ -267,22 +289,71 @@ void QuickSort(TCel *C, int p, int r){
     }
 }
 
-void MergeSort(TCel *C, int n){
+void Merge(TCidade *C, int l, int m, int r){
+    int n1 = m - l + 1;
+    int n2 = r - m;
+    TCidade L[n1], R[n2];  //
 
+    for (int i = 0; i < n1; i++)
+        L[i] = C[l + i];
+    for (int j = 0; j < n2; j++)
+        R[j] = C[m + 1 + j];
+
+    int i = 0, j = 0, k = l;
+    while (i < n1 && j < n2) {
+        if (L[i].id <= R[j].id) {
+            C[k] = L[i];
+            i++;
+        } else {
+            C[k] = R[j];
+            j++;
+        }
+        k++;
+    }
+
+    while (i < n1) {
+        C[k] = L[i];
+        i++;
+        k++;
+    }
+
+    while (j < n2) {
+        C[k] = R[j];
+        j++;
+        k++;
+    }
 }
 
+void Mergesort(TCidade *C, int l, int r) {
+    if (l >= r)
+        return;
+    int m = l + (r - l) / 2;
+    Mergesort(C, l, m);
+    Mergesort(C, m + 1, r);
+    Merge(C, l, m, r);
+}
+
+
+// Impressão das cidades
+void Imprimir_cidades(TCel *x){
+    if(x != NULL){
+        Imprimir_cidades(x->esq);
+        printf("%s %d, ", x->item.nome_cidade,  x->item.id);
+        Imprimir_cidades(x->dir);
+    }
+}
 
 // Caminhamento InOrdem, Pre e Pos
 void InOrdem(TCel *x){
     if(x != NULL){
         InOrdem(x->esq);
-        printf("[%d - %s] -> ", x->item.id, x->item.nome_cidade);
+        printf("[%s - %d] -> ", x->item.nome_cidade,  x->item.id);
         InOrdem(x->dir);
     }
 }
 void PreOrdem(TCel *x){
     if(x != NULL){
-        printf("[%d - %s] -> ", x->item.id, x->item.nome_cidade);
+        printf("[%s - %d] -> ", x->item.nome_cidade,  x->item.id);
         PreOrdem(x->esq);
         PreOrdem(x->dir);
     }
@@ -291,9 +362,10 @@ void PosOrdem(TCel *x){
     if(x != NULL){
         PosOrdem(x->esq);
         PosOrdem(x->dir);
-        printf("[%d - %s] -> ", x->item.id, x->item.nome_cidade);
+        printf("[%s - %d] -> ", x->item.nome_cidade,  x->item.id);
     }
 }
+
 
 int main() {
     setlocale(LC_ALL,"portuguese");
@@ -301,21 +373,14 @@ int main() {
     TArvore arvore;
     arvore.raiz = NULL;
 
-    char *cidade[] = {"Nova Era", "João Monlevade", "Ipatinga", "Belo Horizonte", "Itabira"};
+    char *cidade[] = {"Nova Era", "Joao Monlevade", "Ipatinga", "Belo Horizonte", "Itabira"};
     int num_cidade = sizeof(cidade) / sizeof(cidade[0]);
     Cidade_aleatoria(&arvore.raiz, cidade, num_cidade);
 
-/*
-    TCidade c1, c2, c3;
-    c1.id = 3;
-    c2.id = 2;
-    c3.id = 1;
-
-    Inserir(&arvore.raiz, NULL, c1);
-    Inserir(&arvore.raiz, NULL, c2);
-    Inserir(&arvore.raiz, NULL, c3);
-*/
-
+    printf("Cidades: ");
+    Imprimir_cidades(arvore.raiz);
+    printf("\n");
+    printf("\n");
     printf("Pre-Order: ");
     PreOrdem(arvore.raiz);
     printf("\n");
@@ -324,6 +389,41 @@ int main() {
     printf("\n");
     printf("Pos-Order: ");
     PosOrdem(arvore.raiz);
+    printf("\n");
+    printf("\n");
+
+    int escolha;
+    TCel* pesquisa = NULL;
+    TCidade i;
+    bool loop = true;
+
+    printf("ARVORE BINARIA");
+    while(loop) {
+        printf("\n\t1. Pesquisa pelo ID\n\t2. Sair");
+        printf("\nEscolha: ");
+        scanf("%d", &escolha);
+        getchar();
+        switch (escolha) {
+            case 1:
+                printf("Digite o ID que deseja verificar se ha na arvore: ");
+                scanf("%d", &i.id);
+                getchar();
+                pesquisa = Pesquisar(arvore.raiz, i);
+                if (pesquisa != NULL){
+                    printf("O ID [%d] foi encontrado na arvore!\n", pesquisa->item.id);
+                }else {
+                    printf("O ID [%d] nao foi encontrado na arvore!\n", i.id);
+                }
+                break;
+            case 2:
+                printf("Saindo...\n");
+                loop = false;
+                break;
+            default:
+                printf("Erro de digitacao! Digite novamente!\n");
+        }
+    }
+
 
 
     return 0;
