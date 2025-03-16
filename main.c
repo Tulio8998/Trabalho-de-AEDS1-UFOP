@@ -6,7 +6,6 @@
 #include <stdbool.h>
 
 typedef struct {
-    int id;
     char* nome_evento;
     float ev_avaliacao;
 } TEvento;
@@ -29,7 +28,6 @@ typedef struct arvore{
 }TArvore;
 
 void Cidade_aleatoria(TCel** x, char* cidade[], int num_cidades);
-TCidade Ler_cidade(char* cidade, int id);
 void Inserir(TCel **x, TCel *pai, TCidade item);
 
 TCidade Ler_cidade(char* cidade, int id) {
@@ -39,10 +37,10 @@ TCidade Ler_cidade(char* cidade, int id) {
     return c;
 }
 
-
 void Cidade_aleatoria(TCel** x, char* cidade[], int num_cidades) {
     char* copia_cidade[num_cidades];
-    int preechimento[num_cidades], aux1[num_cidades], aux2, aux3 = 0, j = 0;;
+    int preechimento[num_cidades];
+    TCidade item;
     srand(time(NULL));
 
     for (int i = 0; i < num_cidades; i++) {
@@ -59,21 +57,9 @@ void Cidade_aleatoria(TCel** x, char* cidade[], int num_cidades) {
         preechimento[posicao] = 1;
     }
 
-    do {
-        aux1[j] = rand() % 101;
-        aux2 = 0;
-        for (int t = 0; t < aux3; t++) {
-            if (aux1[t] == aux1[j]) {
-                aux2 = 1;
-            }
-        }
-        if (aux2 == 0) {
-            j++;
-        }
-    } while (j < num_cidades);
-
     for (int i = 0; i < num_cidades; i++) {
-        Inserir(x, NULL, Ler_cidade(copia_cidade[i], aux1[i]));
+        item.nome_cidade = copia_cidade[i];
+        Inserir(x, NULL, item);
     }
 }
 
@@ -92,10 +78,10 @@ void Inserir(TCel **x, TCel *pai, TCidade item) {
         (*x)->pai = pai;
         return;
     }
-
     TCel *aux = *x;
     while (aux != NULL) {
-        if (item.id < aux->item.id) {
+        int cmp = strcmp(item.nome_cidade, aux->item.nome_cidade);
+        if (cmp < 0 || (cmp == 0 && item.id < aux->item.id)) {
             if (aux->esq == NULL) {
                 aux->esq = CriaNo(item);
                 aux->esq->pai = aux;
@@ -113,13 +99,18 @@ void Inserir(TCel **x, TCel *pai, TCidade item) {
     }
 }
 
-TCel* Pesquisar(TCel *x, TCidade item){                 //Pesquisa um ID
-    if((x == NULL) || (x->item.id == item.id))          // -> caso o valor de x seja nulo ou eu já tenha achado meu item, quebro o fluxo da função
+TCel* Pesquisar_nome(TCel *x, char* nome_cidade) {
+    if (x == NULL) {
+        return NULL;
+    }
+    int cmp = strcmp(x->item.nome_cidade, nome_cidade);
+    if (cmp == 0) {
         return x;
-    if(item.id < x->item.id){                           // -> caso o valor do ID desejado seja menor que X restrinjo o meu processo à arvore
-        return Pesquisar(x->esq, item);                 //   da esquerda e repito o processo até que ache o valor desejado
-    } else {                                            // -> caso o valor do ID desejado seja maior que X restrinjo o meu processo à arvore
-        return Pesquisar(x->dir, item);                 //   da direita e repito o processo até que ache o valor desejado
+    }
+    if (cmp > 0) {
+        return Pesquisar_nome(x->esq, nome_cidade);
+    } else {
+        return Pesquisar_nome(x->dir, nome_cidade);
     }
 }
 
@@ -168,6 +159,7 @@ void Retirar (TArvore *arvore, TCel **z){
     *z = NULL;
 }
 
+/*
 void Bubblesort(TCidade C[], int n){
  TCidade x;
  int i,j;
@@ -197,7 +189,7 @@ void SelectionSort(TCidade*C, int n){
     }
 }
 
-void InsertionSortt(TCidade *C, int n){
+void InsertionSort(TCidade *C, int n){
     int i,j;
     TCidade x;
     for(i = 2; i <= n; i++){
@@ -213,7 +205,7 @@ void InsertionSortt(TCidade *C, int n){
     }
 }
 
-void ShellSortt(TCidade *C, int n){
+void ShellSort(TCidade *C, int n){
     int i, j; int h = 1;
     TCidade x;
     do{
@@ -235,50 +227,21 @@ void ShellSortt(TCidade *C, int n){
     } while(h != 1);
 }
 
-void MaxHeapify(TCidade *C, int i, int n){
-    TCidade aux; int esq = 2*i; int dir = 2*i+1; int maior;
-    if((C[i].id < C[esq].id) && (esq <= n) && esq >= 1)
-        maior = esq;
-    else
-        maior = i;
-    if((C[maior].id < C[dir].id) && (dir <= n) && dir >= 1)
-        maior = dir;
-    if(maior != i){
-        aux = C[maior];
-        C[maior] = C[i];
-        MaxHeapify(C, maior, n);
-    }
-}
-
-void BuildMaxHeap(TCidade *C, int n){
-    int i;
-    for(i = n/2; i > 0; i--){
-        MaxHeapify(C, i, n);
-    }
-}
-
-void HeapSort(TCidade *C, int n){
-    TCidade aux; int tam = n;
-    int i;
-    BuildMaxHeap(C, n);
-    for(i = 1; i <= n - 1; i++){
-        aux = C[1];
-        C[1] = C[tam];
-        tam--;
-        MaxHeapify(C, 1, tam);
-    }
-}
-
-int Particao(TCidade *C, int p, int r){
+int Particao(TCidade *C, int p, int r) {
+    TCidade x = C[r];
     int i = p - 1;
-    TCidade x, aux;
-    x = C[r];
-    for(int j = p; j < r; j++){
-        i = i + 1;
-        aux = C[i];
-        C[i] = C[j];
-        C[j] = aux;
+    for (int j = p; j < r; j++) {
+        if (C[j].id <= x.id) {
+            i++;
+            TCidade aux = C[i];
+            C[i] = C[j];
+            C[j] = aux;
+        }
     }
+    TCidade aux = C[i + 1];
+    C[i + 1] = C[r];
+    C[r] = aux;
+    return i + 1;
 }
 
 void QuickSort(TCidade *C, int p, int r){
@@ -333,12 +296,47 @@ void Mergesort(TCidade *C, int l, int r) {
     Merge(C, l, m, r);
 }
 
+void MaxHeapify(TCidade *C, int i, int n){
+    TCidade aux; int esq = 2*i; int dir = 2*i+1; int maior;
+    if((C[i].id < C[esq].id) && (esq <= n) && esq >= 1)
+        maior = esq;
+    else
+        maior = i;
+    if((C[maior].id < C[dir].id) && (dir <= n) && dir >= 1)
+        maior = dir;
+    if(maior != i){
+        aux = C[maior];
+        C[maior] = C[i];
+        MaxHeapify(C, maior, n);
+    }
+}
+
+void BuildMaxHeap(TCidade *C, int n){
+    int i;
+    for(i = n/2; i > 0; i--){
+        MaxHeapify(C, i, n);
+    }
+}
+
+void HeapSort(TCidade *C, int n) {
+    TCidade aux;
+    int tam = n;
+    BuildMaxHeap(C, n);
+    for (int i = n; i >= 2; i--) {
+        aux = C[1];
+        C[1] = C[i];
+        C[i] = aux;
+        tam--;
+        MaxHeapify(C, 1, tam);
+    }
+}
+*/
 
 // Impressão das cidades
 void Imprimir_cidades(TCel *x){
     if(x != NULL){
         Imprimir_cidades(x->esq);
-        printf("%s %d, ", x->item.nome_cidade,  x->item.id);
+        printf("%s, ", x->item.nome_cidade);
         Imprimir_cidades(x->dir);
     }
 }
@@ -347,13 +345,13 @@ void Imprimir_cidades(TCel *x){
 void InOrdem(TCel *x){
     if(x != NULL){
         InOrdem(x->esq);
-        printf("[%s - %d] -> ", x->item.nome_cidade,  x->item.id);
+        printf("[%s] -> ", x->item.nome_cidade);
         InOrdem(x->dir);
     }
 }
 void PreOrdem(TCel *x){
     if(x != NULL){
-        printf("[%s - %d] -> ", x->item.nome_cidade,  x->item.id);
+        printf("[%s] -> ", x->item.nome_cidade);
         PreOrdem(x->esq);
         PreOrdem(x->dir);
     }
@@ -362,7 +360,7 @@ void PosOrdem(TCel *x){
     if(x != NULL){
         PosOrdem(x->esq);
         PosOrdem(x->dir);
-        printf("[%s - %d] -> ", x->item.nome_cidade,  x->item.id);
+        printf("[%s] -> ", x->item.nome_cidade);
     }
 }
 
@@ -394,25 +392,26 @@ int main() {
 
     int escolha;
     TCel* pesquisa = NULL;
-    TCidade i;
+    TCidade i, c;
     bool loop = true;
 
     printf("ARVORE BINARIA");
     while(loop) {
-        printf("\n\t1. Pesquisa pelo ID\n\t2. Sair");
+        printf("\n\t1. Pesquisa pelo NOME\n\t2. Sair");
         printf("\nEscolha: ");
         scanf("%d", &escolha);
         getchar();
         switch (escolha) {
             case 1:
-                printf("Digite o ID que deseja verificar se ha na arvore: ");
-                scanf("%d", &i.id);
-                getchar();
-                pesquisa = Pesquisar(arvore.raiz, i);
+                printf("Digite o NOME da cidade que deseja verificar se ha na arvore: ");
+                char nome[100];
+                fgets(nome, sizeof(nome), stdin);
+                nome[strcspn(nome, "\n")] = '\0';
+                pesquisa = Pesquisar_nome(arvore.raiz, nome);
                 if (pesquisa != NULL){
-                    printf("O ID [%d] foi encontrado na arvore!\n", pesquisa->item.id);
+                    printf("O NOME [%s] foi encontrado na arvore!\n", pesquisa->item.nome_cidade);
                 }else {
-                    printf("O ID [%d] nao foi encontrado na arvore!\n", i.id);
+                    printf("O NOME [%s] nao foi encontrado na arvore!\n", nome);
                 }
                 break;
             case 2:
