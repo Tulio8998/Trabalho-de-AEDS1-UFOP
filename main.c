@@ -11,7 +11,6 @@ typedef struct {
 } TEvento;
 
 typedef struct {
-    int id;
     char* nome_cidade;
     TEvento evento;
 } TCidade;
@@ -21,7 +20,7 @@ typedef struct cel{
     struct cel *pai;
     struct cel *esq;
     struct cel *dir;
-}TCel;
+} TCel;
 
 typedef struct arvore{
     TCel *raiz;
@@ -29,13 +28,6 @@ typedef struct arvore{
 
 void Cidade_aleatoria(TCel** x, char* cidade[], int num_cidades);
 void Inserir(TCel **x, TCel *pai, TCidade item);
-
-TCidade Ler_cidade(char* cidade, int id) {
-    TCidade c;
-    c.nome_cidade = cidade;
-    c.id = id;
-    return c;
-}
 
 void Cidade_aleatoria(TCel** x, char* cidade[], int num_cidades) {
     char* copia_cidade[num_cidades];
@@ -81,7 +73,7 @@ void Inserir(TCel **x, TCel *pai, TCidade item) {
     TCel *aux = *x;
     while (aux != NULL) {
         int cmp = strcmp(item.nome_cidade, aux->item.nome_cidade);
-        if (cmp < 0 || (cmp == 0 && item.id < aux->item.id)) {
+        if (cmp < 0 || (cmp == 0)) {
             if (aux->esq == NULL) {
                 aux->esq = CriaNo(item);
                 aux->esq->pai = aux;
@@ -161,43 +153,42 @@ void Retirar (TArvore *arvore, TCel **z){
 
 /*
 void Bubblesort(TCidade C[], int n){
- TCidade x;
- int i,j;
- for(i = 1; i < n; i++){
-  for(j = n; j > i; j--){
-     if(C[j].id < C[j - 1].id){
-        x = C[j];
-        C[j] = C[j - 1];
-        C[j - 1] = x;
-     }
-  }
- }
+    TCidade x;
+    int i, j;
+    for(i = 1; i < n; i++){
+        for(j = n; j > i; j--){
+            if(C[j].id > C[j - 1].id){
+                x = C[j];
+                C[j] = C[j - 1];
+                C[j - 1] = x;
+            }
+        }
+    }
 }
 
 void SelectionSort(TCidade*C, int n){
-    int i,j,Min;
+    int i, j, Max;
     TCidade x;
     for(i = 1; i <= n - 1; i++){
-        Min = i;
+        Max = i;
         for(j = i + 1; j <= n; j++)
-            if(C[j].id < C[Min].id){
-                Min = j;
-        }
-        x = C[Min];
-        C[Min] = C[i];
+            if(C[j].id > C[Max].id){
+                Max = j;
+            }
+        x = C[Max];
+        C[Max] = C[i];
         C[i] = x;
     }
 }
 
 void InsertionSort(TCidade *C, int n){
-    int i,j;
+    int i, j;
     TCidade x;
     for(i = 2; i <= n; i++){
         x = C[i];
         j = i - 1;
-        j = i - 1;
         C[0] = x;
-        while(x.id < C[j].id){
+        while(x.id > C[j].id){
             C[j + 1] = C[j];
             j--;
         }
@@ -206,17 +197,17 @@ void InsertionSort(TCidade *C, int n){
 }
 
 void ShellSort(TCidade *C, int n){
-    int i, j; int h = 1;
+    int i, j, h = 1;
     TCidade x;
     do{
         h = h * 3 + 1;
-    }while(h < n);
+    } while(h < n);
     do{
         h /= 3;
         for(i = h + 1; i <= n; i++){
             x = C[i];
             j = i;
-            while(C[j - h].id > x.id){
+            while(C[j - h].id < x.id){
                 C[j] = C[j - h];
                 j -= h;
                 if(j <= h)
@@ -231,7 +222,7 @@ int Particao(TCidade *C, int p, int r) {
     TCidade x = C[r];
     int i = p - 1;
     for (int j = p; j < r; j++) {
-        if (C[j].id <= x.id) {
+        if (C[j].id >= x.id) {
             i++;
             TCidade aux = C[i];
             C[i] = C[j];
@@ -245,7 +236,7 @@ int Particao(TCidade *C, int p, int r) {
 }
 
 void QuickSort(TCidade *C, int p, int r){
-    if( p < r){
+    if(p < r){
         int q = Particao(C, p, r);
         QuickSort(C, p, q - 1);
         QuickSort(C, q + 1, r);
@@ -255,7 +246,7 @@ void QuickSort(TCidade *C, int p, int r){
 void Merge(TCidade *C, int l, int m, int r){
     int n1 = m - l + 1;
     int n2 = r - m;
-    TCidade L[n1], R[n2];  //
+    TCidade L[n1], R[n2];
 
     for (int i = 0; i < n1; i++)
         L[i] = C[l + i];
@@ -264,7 +255,7 @@ void Merge(TCidade *C, int l, int m, int r){
 
     int i = 0, j = 0, k = l;
     while (i < n1 && j < n2) {
-        if (L[i].id <= R[j].id) {
+        if (L[i].id >= R[j].id) {
             C[k] = L[i];
             i++;
         } else {
@@ -297,17 +288,17 @@ void Mergesort(TCidade *C, int l, int r) {
 }
 
 void MaxHeapify(TCidade *C, int i, int n){
-    TCidade aux; int esq = 2*i; int dir = 2*i+1; int maior;
-    if((C[i].id < C[esq].id) && (esq <= n) && esq >= 1)
-        maior = esq;
+    TCidade aux; int esq = 2*i; int dir = 2*i+1; int menor;
+    if((C[i].id > C[esq].id) && (esq <= n) && esq >= 1)
+        menor = esq;
     else
-        maior = i;
-    if((C[maior].id < C[dir].id) && (dir <= n) && dir >= 1)
-        maior = dir;
-    if(maior != i){
-        aux = C[maior];
-        C[maior] = C[i];
-        MaxHeapify(C, maior, n);
+        menor = i;
+    if((C[menor].id > C[dir].id) && (dir <= n) && dir >= 1)
+        menor = dir;
+    if(menor != i){
+        aux = C[menor];
+        C[menor] = C[i];
+        MaxHeapify(C, menor, n);
     }
 }
 
@@ -327,8 +318,8 @@ void HeapSort(TCidade *C, int n) {
         C[1] = C[i];
         C[i] = aux;
         tam--;
-        MaxHeapify(C, 1, tam);
-    }
+        MaxHeapify(C, 1, tam);
+    }
 }
 */
 
