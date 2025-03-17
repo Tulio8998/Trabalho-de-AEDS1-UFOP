@@ -1,5 +1,13 @@
 # depslib dependency file v1.0
-1742096416 source:c:\users\túlio\documents\codeblocks\trabalho-de-aeds1\main.c
+1742143791 source:c:\users\túlio\documents\codeblocks\trabalho-de-aeds1\main.c
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	<time.h>
+	<locale.h>
+	<stdbool.h>
+
+1742170840 source:c:\users\túlio\downloads\trabalho-de-aeds1\main.c
 	<stdio.h>
 	<string.h>
 	<stdlib.h>
