@@ -30,6 +30,42 @@ typedef struct arvore{
 void Cidade_aleatoria(TCel** x, char* cidade[], int num_cidades);
 void Inserir(TCel **x, TCel *pai, TCidade item);
 
+TCel* CriaNo(TCidade item) {
+    TCel *novoNo = (TCel*)malloc(sizeof(TCel));
+    novoNo->item = item;
+    novoNo->pai = NULL;
+    novoNo->esq = NULL;
+    novoNo->dir = NULL;
+    return novoNo;
+}
+
+void Inserir(TCel **x, TCel *pai, TCidade item) {
+    if (*x == NULL) {
+        *x = CriaNo(item);
+        (*x)->pai = pai;
+        return;
+    }
+    TCel *aux = *x;
+    while (aux != NULL) {
+        int cmp = strcmp(item.nome_cidade, aux->item.nome_cidade);
+        if (cmp < 0 || (cmp == 0)) {
+            if (aux->esq == NULL) {
+                aux->esq = CriaNo(item);
+                aux->esq->pai = aux;
+                return;
+            }
+            aux = aux->esq;
+        } else {
+            if (aux->dir == NULL) {
+                aux->dir = CriaNo(item);
+                aux->dir->pai = aux;
+                return;
+            }
+            aux = aux->dir;
+        }
+    }
+}
+
 void Cidade_aleatoria(TCel** x, char* cidade[], int num_cidades) {
     char* copia_cidade[num_cidades];
     int preechimento[num_cidades];
@@ -82,42 +118,6 @@ void Evento_aleatorio(TCel* x, char* eventos[], int num_eventos) {
     Evento_aleatorio(x->dir, eventos, num_eventos);
 }
 
-TCel* CriaNo(TCidade item) {
-    TCel *novoNo = (TCel*)malloc(sizeof(TCel));
-    novoNo->item = item;
-    novoNo->pai = NULL;
-    novoNo->esq = NULL;
-    novoNo->dir = NULL;
-    return novoNo;
-}
-
-void Inserir(TCel **x, TCel *pai, TCidade item) {
-    if (*x == NULL) {
-        *x = CriaNo(item);
-        (*x)->pai = pai;
-        return;
-    }
-    TCel *aux = *x;
-    while (aux != NULL) {
-        int cmp = strcmp(item.nome_cidade, aux->item.nome_cidade);
-        if (cmp < 0 || (cmp == 0)) {
-            if (aux->esq == NULL) {
-                aux->esq = CriaNo(item);
-                aux->esq->pai = aux;
-                return;
-            }
-            aux = aux->esq;
-        } else {
-            if (aux->dir == NULL) {
-                aux->dir = CriaNo(item);
-                aux->dir->pai = aux;
-                return;
-            }
-            aux = aux->dir;
-        }
-    }
-}
-
 TCel* Pesquisar_nome(TCel *x, char* nome_cidade) {
     if (x == NULL) {
         return NULL;
@@ -130,6 +130,33 @@ TCel* Pesquisar_nome(TCel *x, char* nome_cidade) {
         return Pesquisar_nome(x->esq, nome_cidade);
     } else {
         return Pesquisar_nome(x->dir, nome_cidade);
+    }
+}
+
+TEvento* Pesquisar_evento_nome(TCidade* x, char* nome_evento) {
+
+    for(int i = 0; i < x->qtd_eventos;i++){
+        if(!(strcmp(nome_evento, x->evento[i].nome_evento))){
+            return &(x->evento[i]);
+        }
+    }
+    return NULL;
+
+}
+
+TEvento Buscar_evento_avaliacao(TCidade* x, float ev_avaliacao ){
+    float Aux;
+    float minimo = 10;
+    for(int i = 0; i<x->qtd_eventos;i++){
+        Aux = fabs((ev_avaliacao) - (x->evento[i].ev_avaliacao));
+        if(Aux<minimo){
+            minimo = Aux;
+        }
+    }
+    for(int i = 0; i<x->qtd_eventos;i++){
+        if(fabs((ev_avaliacao) - (x->evento[i].ev_avaliacao))== minimo){
+            return x->evento[i];
+        }
     }
 }
 
@@ -563,65 +590,111 @@ int main() {
     bool loop = true;
 
     while(loop) {
-        printf("ARVORE BINARIA");
-        printf("\n\t1. Pesquisa pelo NOME\n\t2. Visualizar metodos de ordenacao\n\t3. Sair");
+        printf("\nARVORE BINARIA");
+        printf("\n\t1. Pesquisar CIDADE pelo NOME\n\t2. Visualizar metodos de ordenacao\n\t3. Sair");
         printf("\nEscolha: ");
         scanf("%d", &escolha);
+        
         getchar();
         switch (escolha) {
             case 1:
-                printf("Digite o NOME da cidade que deseja verificar se ha na arvore: ");
+                printf("\nQual CIDADE deseja pesquisar: ");
                 char nome[100];
                 fgets(nome, sizeof(nome), stdin);
                 nome[strcspn(nome, "\n")] = '\0';
                 pesquisa = Pesquisar_nome(arvore.raiz, nome);
                 if (pesquisa != NULL){
                     printf("O NOME [%s] foi encontrado na arvore!\n", pesquisa->item.nome_cidade);
+                    while (true) {
+                    printf("\nDeseja pesquisar EVENTO por \n\t1. NOME\n\t2. AVALIACAO\n\t3. Sair");
+                    printf("\nEscolha: ");
+                    scanf("%d",&escolha);
+                    if (escolha != 1) {
+                        printf("Erro de digitacao! Digite novamente!\n");
+                        continue;
+                    }
+                    getchar();
+                        switch(escolha){
+                            case 1:
+                                printf("\nDigite o NOME do EVENTO: ");
+                                fgets(nome, sizeof(nome), stdin);
+                                nome[strcspn(nome, "\n")] = '\0';
+                                TEvento* evento = Pesquisar_evento_nome(&pesquisa->item,nome);
+                                if(evento != NULL){
+                                    printf("Foi encontrado o EVENTO [%s] na CIDADE [%s]\n",evento->nome_evento,pesquisa->item.nome_cidade);
+                                }else{
+                                    printf("O EVENTO [%s] nao foi encontrado na CIDADE[%s]\n",nome,pesquisa->item.nome_cidade);
+                                }
+                                break;
+                            case 2:
+                                printf("\nDigite o VALOR da AVALIACAO desejada: ");
+                                float nota;
+                                scanf("%f",&nota);
+                                TEvento evento2 = Buscar_evento_avaliacao(&pesquisa->item,nota);
+                                printf("O evento [%s] eh o que tem a nota mais proxima da desejada\n",evento2.nome_evento);
+                                break;
+                            case 3: 
+                                printf("Voltando para o menu principal\n");
+                                break;
+                            default:
+                                printf("Erro de digitacao! Digite novamente!\n");
+                        }
+                        if (escolha == 3){
+                            printf("\n");
+                            break;    
+                        }
+                    }
                 }else {
-                    printf("O NOME [%s] nao foi encontrado na arvore!\n", nome);
+                    printf("O NOME [%s] nao foi encontrado na arvore!\n\n", nome);
                 }
                 break;
             case 2:
-                printf("Escolha o metodo de ordenacao:");
-                printf("\n\t1. Bublle Sort\n\t2. Selection Sort\n\t3. Insertion Sort\n\t4. Shellsort\n\t5. Quixksort\n\t6. Mergesort\n\t7. Heapsort\n\t8. Sair");
-                printf("\nEscolha: ");
-                scanf("%d", &escolha);
-                getchar();
-                switch(escolha){
-                    case 1:
-                        printf("\nMETODO BUBBLE SORT:");
-                        BubbleSort(arvore.raiz);
-                        break;
-                    case 2:
-                        printf("\nMETODO SELECTION SORT:");
-                        SelectionSort(arvore.raiz);
-                        break;
-                    case 3:
-                        printf("\nMETODO INSERTION SORT:");
-                        InsertionSort(arvore.raiz);
-                        break;
-                    case 4:
-                        printf("\nMETODO SHELL SORT:");
-                        ShellSort(arvore.raiz);
-                        break;
-                    case 5:
-                        printf("\nMETODO QUICK SORT:");
-                        Imprime_QuickSort(arvore.raiz);
-                        break;
-                    case 6:
-                        printf("\nMETODO MERGE SORT:");
-                        Imprimir_MergeSort(arvore.raiz);
-                        break;
-                    case 7:
-                        printf("\nMETODO HEAP SORT:");
-                        Imprimir_HeapSort(arvore.raiz);
-                        break;
-                    case 8:
-                        printf("Saindo...\n");
-                        return;
-                        break;
-                    default:
-                        printf("Erro de digitacao! Digite novamente!\n");
+                while (true) {
+                    printf("\nEscolha o metodo de ordenacao:");
+                    printf("\n\t1. Bublle Sort\n\t2. Selection Sort\n\t3. Insertion Sort\n\t4. Shellsort\n\t5. Quixksort\n\t6. Mergesort\n\t7. Heapsort\n\t8. Sair");
+                    printf("\nEscolha: ");
+                    scanf("%d", &escolha);
+                    getchar();
+                    switch(escolha){
+                        case 1:
+                            printf("\nMETODO BUBBLE SORT:");
+                            BubbleSort(arvore.raiz);
+                            break;
+                        case 2:
+                            printf("\nMETODO SELECTION SORT:");
+                            SelectionSort(arvore.raiz);
+                            break;
+                        case 3:
+                            printf("\nMETODO INSERTION SORT:");
+                            InsertionSort(arvore.raiz);
+                            break;
+                        case 4:
+                            printf("\nMETODO SHELL SORT:");
+                            ShellSort(arvore.raiz);
+                            break;
+                        case 5:
+                            printf("\nMETODO QUICK SORT:");
+                            Imprime_QuickSort(arvore.raiz);
+                            break;
+                        case 6:
+                            printf("\nMETODO MERGE SORT:");
+                            Imprimir_MergeSort(arvore.raiz);
+                            break;
+                        case 7:
+                            printf("\nMETODO HEAP SORT:");
+                            Imprimir_HeapSort(arvore.raiz);
+                            break;
+                        case 8:
+                            printf("Voltando para o menu principal\n");
+                            break;
+                            break;
+                        default:
+                            printf("Erro de digitacao! Digite novamente!\n");
+                    }
+                    if (escolha == 8){
+                        printf("\n");
+                        break;    
+                    }
                 }
                 break;
             case 3:
