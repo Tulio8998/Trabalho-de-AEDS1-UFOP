@@ -15,3 +15,12 @@
 	<locale.h>
 	<stdbool.h>
 
+1742265566 source:c:\facul\trabalhos\aeds_arvore\trabalho-de-aeds1-ufop\main.c
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	<time.h>
+	<locale.h>
+	<stdbool.h>
+	<math.h>
+

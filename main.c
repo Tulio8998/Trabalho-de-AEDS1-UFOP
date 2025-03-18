@@ -4,6 +4,7 @@
 #include <time.h>
 #include <locale.h>
 #include <stdbool.h>
+#include <math.h>
 
 typedef struct {
     char* nome_evento;
@@ -29,6 +30,7 @@ typedef struct arvore{
 
 void Cidade_aleatoria(TCel** x, char* cidade[], int num_cidades);
 void Inserir(TCel **x, TCel *pai, TCidade item);
+
 
 void Cidade_aleatoria(TCel** x, char* cidade[], int num_cidades) {
     char* copia_cidade[num_cidades];
@@ -63,14 +65,41 @@ void Evento_aleatorio(TCel* x, char* eventos[], int num_eventos) {
     int num = (rand() % 5) + 1;
     x->item.qtd_eventos = num;
 
+    int preechimento[num_eventos];
+    for (int i = 0; i < num_eventos; i++) {
+        preechimento[i] = 0;
+    }
+
     for (int i = 0; i < num; i++) {
-        int indice = rand() % num_eventos;
+        int indice;
+        do {
+            indice = rand() % num_eventos;
+        } while (preechimento[indice]);
+
         x->item.evento[i].nome_evento = eventos[indice];
         x->item.evento[i].ev_avaliacao = ((float)rand() / RAND_MAX) * 10.0;
+        preechimento[indice] = 1;
     }
 
     Evento_aleatorio(x->esq, eventos, num_eventos);
-    Evento_aleatorio(x->dir, eventos, num_eventos);
+    Evento_aleatorio(x->dir,eventos,num_eventos);
+}
+
+TEvento buscarEventoAvaliacao(TCidade* x, float ev_avaliacao ){
+    float Aux;
+    float minimo = 10;
+    for(int i = 0; i<x->qtd_eventos;i++){
+        Aux = abs((ev_avaliacao) - (x->evento[i].ev_avaliacao));
+        if(Aux<minimo){
+            minimo = Aux;
+        }
+    }
+    for(int i = 0; i<x->qtd_eventos;i++){
+        if(abs((ev_avaliacao) - (x->evento[i].ev_avaliacao))== minimo){
+            return x->evento[i];
+        }
+    }
+
 }
 
 TCel* CriaNo(TCidade item) {
@@ -122,6 +151,16 @@ TCel* Pesquisar_nome(TCel *x, char* nome_cidade) {
     } else {
         return Pesquisar_nome(x->dir, nome_cidade);
     }
+}
+TEvento* Pesquisar_evento(TCidade* x, char* nome_evento) {
+
+    for(int i = 0; i < x->qtd_eventos;i++){
+        if(!(strcmp(nome_evento, x->evento[i].nome_evento))){
+            return &(x->evento[i]);
+        }
+    }
+    return NULL;
+
 }
 
 TCel *Minimo(TCel *x){         // Procuro o menor valor da minha árvore
@@ -512,6 +551,7 @@ void PosOrdem(TCel *x){
 }
 
 
+
 int main() {
     setlocale(LC_ALL,"portuguese");
 srand(time(NULL));
@@ -551,26 +591,55 @@ srand(time(NULL));
 
     int escolha;
     TCel* pesquisa = NULL;
+    TCel* buscar = NULL;
     bool loop = true;
 
     while(loop) {
         printf("ARVORE BINARIA");
-        printf("\n\t1. Pesquisa pelo NOME\n\t2. Visualizar metodos de ordenacao\n\t3. Sair");
+        printf("\n\t1. Pesquisar CIDADE pelo NOME\n\t2. Visualizar metodos de ordenacao\n\t3. Pesquisar por avaliacao\n\t4. Sair");
         printf("\nEscolha: ");
         scanf("%d", &escolha);
         getchar();
         switch (escolha) {
             case 1:
-                printf("Digite o NOME da cidade que deseja verificar se ha na arvore: ");
+                printf("Qual CIDADE deseja pesquisar:\n");
                 char nome[100];
                 fgets(nome, sizeof(nome), stdin);
                 nome[strcspn(nome, "\n")] = '\0';
                 pesquisa = Pesquisar_nome(arvore.raiz, nome);
                 if (pesquisa != NULL){
                     printf("O NOME [%s] foi encontrado na arvore!\n", pesquisa->item.nome_cidade);
+                    printf("Deseja pesquisar EVENTO por \n\t1. NOME\n\t2. AVALIACAO");
+                    printf("\nEscolha: ");
+                    scanf("%d",&escolha);
+                    getchar();
+                    switch(escolha){
+                        case 1:
+                            printf("Digite o NOME do EVENTO:\n");
+                            fgets(nome, sizeof(nome), stdin);
+                            nome[strcspn(nome, "\n")] = '\0';
+                            TEvento* evento = Pesquisar_evento(&pesquisa->item,nome);
+                            if(evento != NULL){
+                                printf("Foi encontrado o EVENTO [%s] na CIDADE [%s]\n",evento->nome_evento,pesquisa->item.nome_cidade);
+                            }else{
+                                printf("O EVENTO [%s] nao foi encontrado na CIDADE[%s]\n",nome,pesquisa->item.nome_cidade);
+                            }
+                            break;
+                        case 2:
+                            printf("Digite o VALOR da AVALIACAO desejada:\n");
+                            float nota;
+                            scanf("%f",&nota);
+                            TEvento evento2 = buscarEventoAvaliacao(&pesquisa->item,nota);
+                            printf("O evento [%s] eh o que tem a nota mais proxima da desejada\n",evento2.nome_evento);
+                            break;
+                        default:
+                            printf("Erro de digitacao! Digite novamente!\n");
+
+                    }
                 }else {
                     printf("O NOME [%s] nao foi encontrado na arvore!\n", nome);
                 }
+
                 break;
             case 2:
                 printf("Escolha o metodo de ordenacao:");
@@ -616,6 +685,11 @@ srand(time(NULL));
                 }
                 break;
             case 3:
+                printf("Digite a avaliacao que deseja!\n");
+
+                break;
+
+            case 4:
                 printf("Saindo...\n");
                 loop = false;
                 break;
