@@ -34,7 +34,6 @@ void Cidade_aleatoria(TCel** x, char* cidade[], int num_cidades) {
     char* copia_cidade[num_cidades];
     int preechimento[num_cidades];
     TCidade item;
-    srand(time(NULL));
 
     for (int i = 0; i < num_cidades; i++) {
         preechimento[i] = 0;
@@ -63,10 +62,20 @@ void Evento_aleatorio(TCel* x, char* eventos[], int num_eventos) {
     int num = (rand() % 5) + 1;
     x->item.qtd_eventos = num;
 
+    int preechimento[num_eventos];
+    for (int i = 0; i < num_eventos; i++) {
+        preechimento[i] = 0;
+    }
+
     for (int i = 0; i < num; i++) {
-        int indice = rand() % num_eventos;
+        int indice;
+        do {
+            indice = rand() % num_eventos;
+        } while (preechimento[indice]);
+
         x->item.evento[i].nome_evento = eventos[indice];
         x->item.evento[i].ev_avaliacao = ((float)rand() / RAND_MAX) * 10.0;
+        preechimento[indice] = 1;
     }
 
     Evento_aleatorio(x->esq, eventos, num_eventos);
@@ -514,7 +523,7 @@ void PosOrdem(TCel *x){
 
 int main() {
     setlocale(LC_ALL,"portuguese");
-srand(time(NULL));
+    srand(time(NULL));
 
     TArvore arvore;
     arvore.raiz = NULL;
