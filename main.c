@@ -625,6 +625,7 @@ int main() {
                     printf("\n\t1. Visualizar metodos de ordenacao\n\t2. Visualizar tipos de percursos na arvore\n\t3. Visualizar cidades disponiveis\n\t4. Visualizar eventos disponiveis nas cidades\n\t5. Sair");
                     printf("\nEscolha: ");
                     scanf("%d", &escolha);
+                    getchar();
                     switch(escolha) {
                         case 1:
                         while (true) {
@@ -723,6 +724,8 @@ int main() {
                     case 5:
                         printf("\nVoltando para o menu principal\n");
                         break;
+                    default:
+                        printf("Erro de digitacao! Digite novamente!\n");
                     }
                     if (escolha == 5){
                         printf("\n");
@@ -735,7 +738,7 @@ int main() {
                 loop = false;
                 break;
             default:
-                printf("Erro de digitacao! Digite novamente!\n");
+                printf("\nErro de digitacao! Digite novamente!\n\n");
         }
     }
 
