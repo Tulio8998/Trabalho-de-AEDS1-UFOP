@@ -609,10 +609,6 @@ int main() {
                     printf("\nDeseja pesquisar EVENTO por \n\t1. NOME\n\t2. AVALIACAO\n\t3. Sair");
                     printf("\nEscolha: ");
                     scanf("%d",&escolha);
-                    if (escolha != 1) {
-                        printf("Erro de digitacao! Digite novamente!\n");
-                        continue;
-                    }
                     getchar();
                         switch(escolha){
                             case 1:
