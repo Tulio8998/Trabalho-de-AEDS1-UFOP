@@ -305,6 +305,21 @@ void Evento_maior_avalicao(TCel* x) {
     Evento_maior_avalicao(x->dir);
 }
 
+void Contar_eventos(TCel* x){
+    if (x == NULL) {
+        return;
+    }
+    int cont = 0;
+
+    printf("\n%s: ", x->item.nome_cidade);
+    for (int i = 0; i <  x->item.qtd_eventos; i++) {
+        cont++;
+    }
+    printf("%d eventos na cidade\n", cont);
+
+    Contar_eventos(x->esq);
+    Contar_eventos(x->dir);
+}
 
 TCel *Minimo(TCel *x){         // Procuro o menor valor da minha árvore
     if(x == NULL){
@@ -694,9 +709,8 @@ void Exibir_mensagem(TCel* x) {
     int aux1 = rand() % (sizeof(mens1) / sizeof(mens1[0]));
     int aux2 = rand() % (sizeof(mens2) / sizeof(mens2[0]));
     int aux3 = rand() % x->item.qtd_eventos;
-    if (x->item.qtd_eventos > 0) {
-        printf("%s %s - %s", mens1[aux1], x->item.evento[aux3].nome_evento, mens2[aux2]);
-    }
+
+    printf("%s %s - %s", mens1[aux1], x->item.evento[aux3].nome_evento, mens2[aux2]);
 
     return;
 }
@@ -1029,6 +1043,11 @@ int main() {
                             
                             break;
                         case 3:
+                            printf("\n====================================================");   
+                            printf("\n\tQuantidade de eventos por cidade");
+                            printf("\n====================================================");
+                            Contar_eventos(arvore.raiz);
+                            printf("\n====================================================\n");
                             break;    
                         case 4:
                             printf("\nVoltando para o menu principal\n");
