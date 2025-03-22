@@ -667,11 +667,15 @@ void Imprimir_HeapSort(TCel* x) {
 }
 
 // Impressão das cidades
-void Imprimir_cidades(TCel *x){
+void Imprimir_cidades(TCel *x, int* seta){
     if(x != NULL){
-        Imprimir_cidades(x->esq);
-        printf("%s, ", x->item.nome_cidade);
-        Imprimir_cidades(x->dir);
+        Imprimir_cidades(x->esq, seta);
+        Imprimir_cidades(x->dir, seta);
+        if (*seta == 1) {
+            printf(", ");
+        }
+        printf("[%s]", x->item.nome_cidade);
+        *seta = 1;
     }
 }
 
@@ -692,13 +696,13 @@ void Imprimir_eventos(TCel *x){
 
 void Ordem_cidades(TCel *x, int* seta){
     if(x != NULL){
-        InOrdem(x->esq, seta);
+        Ordem_cidades(x->esq, seta);
         if (*seta == 1) {
             printf(" -> ");
         }
         printf("[%s]", x->item.nome_cidade);
         *seta = 1;
-        InOrdem(x->dir, seta);
+        Ordem_cidades(x->dir, seta);
     }
 }
 
@@ -796,6 +800,9 @@ int main() {
                     getchar();
                     switch (escolha) {
                         case 1:
+                            printf("\n=========================================================================================");
+                            printf("\n\t\t\tPesquisa na cidade");
+                            printf("\n=========================================================================================");
                             printf("\nQual cidade deseja pesquisar: ");
                             char nome[100];
                             fgets(nome, sizeof(nome), stdin);
@@ -822,7 +829,7 @@ int main() {
                                             }
                                             break;
                                         case 2:
-                                            printf("\nDigite o VALOR da avaliação desejada: ");
+                                            printf("\nDigite o valor da avaliação desejada: ");
                                             float nota;
                                             scanf("%f", &nota);
                                             getchar();
@@ -845,13 +852,17 @@ int main() {
                                     }
                                 }
                             } else {
-                                printf("O NOME [%s] não foi encontrado na árvore!\n\n", nome);
+                                printf("Cidade não encontrada!\n");
+                                printf("=========================================================================================\n");
                             }
                             break;
                         case 2:
                             while (true) {
                                 escolha = 0;
-                                printf("Deseja pesquisar evento por: \n\t1. Nome\t\t3. Sair\n\t2. Avaliação");
+                                printf("\n=========================================================================================");
+                                printf("\n\t\t\tPesquisa de eventos em diferentes cidades");
+                                printf("\n=========================================================================================");
+                                printf("\nDeseja pesquisar evento por: \n\t1. Nome\t\t3. Sair\n\t2. Avaliação");
                                 printf("\nEscolha: ");
                                 scanf("%d", &escolha);
                                 getchar();
@@ -860,19 +871,13 @@ int main() {
                                         printf("\nDigite o nome do evento: ");
                                         fgets(nome, sizeof(nome), stdin);
                                         nome[strcspn(nome, "\n")] = '\0';
-                                        printf("\n=========================================================================================");
-                                        printf("\n\t\t\tEventos em diferentes cidades");
-                                        printf("\n=========================================================================================");
                                         if (Pesquisar_evento_nome1(arvore.raiz, nome) == 0) {
-                                            printf("Evento não encontrado!\n");
+                                            printf("\nEvento não encontrado!\n");
                                         }
                                             printf("=========================================================================================\n");
                                         break;
                                     case 2:
-                                        printf("\n=========================================================================================");
-                                        printf("\n\t\t\tAvaliações de eventos em diferentes cidades");
-                                        printf("\n=========================================================================================");
-                                        printf("\nDigite o VALOR da avaliação desejada: ");
+                                        printf("\nDigite o valor da avaliação desejada: ");
                                         float nota;
                                         scanf("%f", &nota);
                                         getchar();
@@ -881,6 +886,7 @@ int main() {
                                         break;
                                     case 3:
                                         printf("\nVoltando para o menu principal\n");
+                                        printf("=========================================================================================\n\n");
                                         break;
                                     default:
                                         printf("\n=========================================================================================");
@@ -896,6 +902,7 @@ int main() {
                             break;
                         case 3:
                             printf("\nVoltando para o menu principal\n");
+                            printf("=========================================================================================\n\n");
                             break;
                         default:
                             printf("\n=========================================================================================");
@@ -991,7 +998,7 @@ int main() {
                             printf("\n=========================================================================================");
                             printf("\n=========================================================================================");
                             printf("\nCidades: ");
-                            Imprimir_cidades(arvore.raiz);
+                            Imprimir_cidades(arvore.raiz, &seta);
                             printf("\n=========================================================================================\n\n");
                             break;
                         case 4:
@@ -1010,7 +1017,7 @@ int main() {
                             break;
                         case 6:
                             printf("\nVoltando para o menu principal\n");
-                            printf("=========================================================================================\n\n");
+                            printf("=========================================================================================\n");
                             break;
                         default:
                             printf("\n=========================================================================================");
@@ -1062,7 +1069,7 @@ int main() {
                             break;    
                         case 4:
                             printf("\nVoltando para o menu principal\n");
-                            printf("=========================================================================================\n\n");
+                            printf("=========================================================================================\n");
                             break;
                         default:
                             printf("\n=========================================================================================");
