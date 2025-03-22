@@ -129,7 +129,7 @@ void Evento_aleatorio(TCel* x, char* eventos[], int num_eventos) {
 }
 
 void Geracao_cidade(TArvore* arvore) {
-    char *cidade[] = {"Nova Era", "João Monlevade", "Ipatinga", "Belo Horizonte", "Itabira"};
+    char *cidade[] = {"Nova Era", "João Monlevade", "Ipatinga", "Belo Horizonte", "Itabira", "Bela Vista", "Antônio Dias"};
     int num_cidade = sizeof(cidade) / sizeof(cidade[0]);
     Cidade_aleatoria(&(arvore->raiz), cidade, num_cidade);
 }
@@ -728,9 +728,9 @@ void Imprimir_cidades(TCel *x, int* seta){
         if (*seta == 1) {
             printf(", ");
         }
-        Imprimir_cidades(x->esq, seta);
         printf("[%s]", x->item.nome_cidade);
         *seta = 1;
+        Imprimir_cidades(x->esq, seta);
     }
 }
 
@@ -852,7 +852,7 @@ int main() {
             case 1:
                 while (true) {
                     escolha = 0;
-                    printf("\n=========================================================================================");
+                    printf("\n\n=========================================================================================");
                     printf("\n\t\t\t\tPESQUISAR");
                     printf("\n=========================================================================================\n");
                     Exibir_mensagem(arvore.raiz);
