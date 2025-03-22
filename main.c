@@ -36,8 +36,8 @@ void Inserir(TCel **x, TCel *pai, TCidade item);
 void InOrdem(TCel *x, int* seta);
 void PreOrdem(TCel *x, int* seta);
 void PosOrdem(TCel *x, int* seta);
-void Ordem_cidades(TCel *x, int* seta); 
-void Exibir_mensagens(TCel* x); 
+void Ordem_cidades(TCel *x, int* seta);
+void Exibir_mensagens(TCel* x);
 
 TCel* CriaNo(TCidade item) {
     TCel *novoNo = (TCel*)malloc(sizeof(TCel));
@@ -106,8 +106,8 @@ void Evento_aleatorio(TCel* x, char* eventos[], int num_eventos) {
 
     int num = (rand() % 5) + 1;
     x->item.qtd_eventos = num;
-    x->item.evento = (TEvento*)malloc(num * sizeof(TEvento)); 
-    
+    x->item.evento = (TEvento*)malloc(num * sizeof(TEvento));
+
     int preechimento[num_eventos];
     for (int i = 0; i < num_eventos; i++) {
         preechimento[i] = 0;
@@ -148,7 +148,6 @@ void CancelarEventosAleatorios(TCel* x, int* cancelados) {
     if (x == NULL || *cancelados >= 4) {
         return;
     }
-    
 
     for (int i = 0; i < x->item.qtd_eventos && *cancelados < 4; i++) {
         if ((rand() % 2) == 0 && *cancelados < 4) {
@@ -156,18 +155,18 @@ void CancelarEventosAleatorios(TCel* x, int* cancelados) {
             cancelados++;
         }
     }
-    
+
     CancelarEventosAleatorios(x->esq, cancelados);
     CancelarEventosAleatorios(x->dir, cancelados);
 }
-  
+
 void ReativarEventosAleatorios(TCel* x) {
     if (x == NULL) {
         return;
     }
 
     for (int i = 0; i < x->item.qtd_eventos; i++) {
-        if (x->item.evento[i].cancelamento == 'C' && (rand() % 2) == 0) {
+        if (x->item.evento[i].cancelamento == 'C' && (rand() % 4) == 0) {
             x->item.evento[i].cancelamento = 'A';
         }
     }
@@ -526,7 +525,7 @@ void ShellSort(TCel* x){
 
     int qtd_eventos = x->item.qtd_eventos;
     TEvento *eventos = (TEvento*)malloc(qtd_eventos * sizeof(TEvento));
-    
+
     for (int i = 0; i < qtd_eventos; i++) {
         eventos[i] = x->item.evento[i];
     }
@@ -852,7 +851,7 @@ int main() {
         switch (escolha) {
             case 1:
                 while (true) {
-                    escolha = 0;    
+                    escolha = 0;
                     printf("\n=========================================================================================");
                     printf("\n\t\t\t\tPESQUISAR");
                     printf("\n=========================================================================================\n");
@@ -906,7 +905,7 @@ int main() {
                                                 printf("O evento %s - %.2f - CANCELADO, é o que tem a avaliação mais próxima da desejada\n", evento2.nome_evento, evento2.ev_avaliacao);
                                             } else {
                                                 printf("O evento %s - %.2f, é o que tem a avaliação mais próxima da desejada\n", evento2.nome_evento, evento2.ev_avaliacao);
-                                            }                      
+                                            }
                                             break;
                                         case 3:
                                             printf("\nVoltando para o menu principal");
@@ -970,7 +969,7 @@ int main() {
                                         printf("\n");
                                         break;
                                     }
-                            } 
+                            }
                             break;
                         case 3:
                             printf("\nVoltando para o menu principal\n");
@@ -1134,7 +1133,7 @@ int main() {
                                                 if (escolha == 8) {
                                                     printf("\n");
                                                     break;
-                                                }                                              
+                                                }
                                             }
                                         break;
                                     case 3:
@@ -1220,8 +1219,8 @@ int main() {
                 scanf("%d", &escolha);
                 getchar();
                     switch (escolha) {
-                        case 1:              
-                            printf("\n=========================================================================================");   
+                        case 1:
+                            printf("\n=========================================================================================");
                             printf("\n\t\t\tEventos as avaliações maiores do que 7");
                             printf("\n=========================================================================================");
                             Buscar_evento_avaliacao_alta(arvore.raiz);
@@ -1234,15 +1233,15 @@ int main() {
                             printf("\n=========================================================================================\n");
                             Ordem_cidades(arvore.raiz, &seta);
                             printf("\n=========================================================================================\n\n");
-                            
+
                             break;
                         case 3:
-                            printf("\n========================================================================================="); 
+                            printf("\n=========================================================================================");
                             printf("\n\t\t\tQuantidade de eventos por cidade");
                             printf("\n=========================================================================================");
                             Contar_eventos(arvore.raiz);
                             printf("\n=========================================================================================\n\n");
-                            break;    
+                            break;
                         case 4:
                             printf("\nVoltando para o menu principal\n");
                             printf("=========================================================================================\n");
@@ -1257,7 +1256,7 @@ int main() {
                         printf("\n");
                         break;
                     }
-                } 
+                }
                 break;
             case 4:
                 printf("\nFechando o roteiro turístico...");
