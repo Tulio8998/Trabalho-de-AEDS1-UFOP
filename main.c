@@ -839,7 +839,7 @@ int main() {
         escolha = 0;
         ReativarEventosAleatorios(arvore.raiz);
         printf("=========================================================================================\n");
-        printf("\t\t\t\tMENU ROTEIRIO TURISTICO");
+        printf("\t\t\t\tMENU ROTEIRO TURISTICO");
         printf("\n=========================================================================================\n");
         Exibir_mensagem(arvore.raiz);
         printf("\n=========================================================================================\n");
