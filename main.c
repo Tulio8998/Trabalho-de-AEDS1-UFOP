@@ -152,7 +152,7 @@ void CancelarEventosAleatorios(TCel* x, int* cancelados) {
     for (int i = 0; i < x->item.qtd_eventos && *cancelados < 4; i++) {
         if ((rand() % 2) == 0 && *cancelados < 4) {
             x->item.evento[i].cancelamento = 'C';
-            cancelados++;
+            (*cancelados)++;
         }
     }
 
