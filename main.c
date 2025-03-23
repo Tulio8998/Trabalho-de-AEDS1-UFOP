@@ -376,6 +376,29 @@ void Contar_eventos(TCel* x){
     Contar_eventos(x->dir);
 }
 
+void Media_eventos_cidades(TCel* x) {
+    if (x == NULL) {
+        return;
+    }
+
+    float soma = 0.0;
+    int qtd_eventos = x->item.qtd_eventos;
+
+    for (int i = 0; i < qtd_eventos; i++) {
+        soma += x->item.evento[i].ev_avaliacao;
+    }
+
+    float media;
+    if (qtd_eventos > 0) {
+        media = soma / qtd_eventos;
+    } else {
+        media = 0.0;
+    }
+    printf("\n%s: Media das avaliacoes de %d eventos = %.2f\n", x->item.nome_cidade,qtd_eventos, media);
+    Media_eventos_cidades(x->esq);
+    Media_eventos_cidades(x->dir);
+}
+
 TCel *Minimo(TCel *x){         
     if(x == NULL){
         return NULL;
@@ -1214,7 +1237,10 @@ int main() {
                 printf("\n=========================================================================================\n");
                 Exibir_mensagem(arvore.raiz);
                 printf("\n=========================================================================================\n");
-                printf("Que tipo de roteiro você gostaria de seguir: \n\t1. Eventos com a avalicao maior do que 7\t3. Cidades com mais eventos\n\t2. Seguir na ordem das cidades\t\t\t4. Sair");
+                printf("Que tipo de roteiro você gostaria de seguir: \n");
+                printf("\t1. Eventos com a avaliação maior do que 7\t4. Média de ventos por cidade\n");
+                printf("\t2. Seguir na ordem das cidades\t\t\t5. Sair\n");
+                printf("\t3. Cidades com mais eventos\n");
                 printf("\nEscolha: ");
                 scanf("%d", &escolha);
                 getchar();
@@ -1243,6 +1269,13 @@ int main() {
                             printf("\n=========================================================================================\n\n");
                             break;
                         case 4:
+                            printf("\n=========================================================================================");
+                            printf("\n\t\t\tMedia de avaliacao de eventos");
+                            printf("\n=========================================================================================");
+                            Media_eventos_cidades(arvore.raiz);
+                            printf("=========================================================================================\n\n");
+                            break; 
+                        case 5:
                             printf("\nVoltando para o menu principal\n");
                             printf("=========================================================================================\n");
                             break;
@@ -1252,7 +1285,7 @@ int main() {
                             printf("\n=========================================================================================\n\n");
                             break;
                     }
-                    if (escolha == 4) {
+                    if (escolha == 5) {
                         printf("\n");
                         break;
                     }
