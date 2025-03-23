@@ -793,10 +793,10 @@ void Exibir_mensagem(TCel* x) {
 
     char* mens1[] = {
         "Evento TOP:", "Um dos melhores da regiao:", "Uma experiencia unica!",
-        "Fique ligado:", "Recomendacao especial:", "Destaque do mês:", "Prepare-se para o melhor:"};
+        "Fique ligado:", "Recomendacao especial:", "Destaque do mes:", "Prepare-se para o melhor:"};
     char* mens2[] = {
         "Nao deixe de participar!", "Imperdivel!", "Nao perca!", "E a chance de viver algo novo!",
-        "Aproveite ao maximo!", "Nao deixe escapar essa chance!", "Garanta já o seu lugar!"};
+        "Aproveite ao maximo!", "Nao deixe escapar essa chance!", "Garanta ja o seu lugar!"};
 
     int aux1 = rand() % (sizeof(mens1) / sizeof(mens1[0]));
     int aux2 = rand() % (sizeof(mens2) / sizeof(mens2[0]));
@@ -866,7 +866,7 @@ int main() {
         printf("\n=========================================================================================\n");
         Exibir_mensagem(arvore.raiz);
         printf("\n=========================================================================================\n");
-        printf("Escolha uma opção abaixo:");
+        printf("Escolha uma opcao abaixo:");
         printf("\n\t1. Pesquisar\t3. Roteiro de viagem\n\t2. Visualizar\t4. Sair");
         printf("\nEscolha: ");
         scanf("%d", &escolha);
@@ -1237,8 +1237,8 @@ int main() {
                 printf("\n=========================================================================================\n");
                 Exibir_mensagem(arvore.raiz);
                 printf("\n=========================================================================================\n");
-                printf("Que tipo de roteiro você gostaria de seguir: \n");
-                printf("\t1. Eventos com a avaliação maior do que 7\t4. Média de ventos por cidade\n");
+                printf("Que tipo de roteiro voce gostaria de seguir: \n");
+                printf("\t1. Eventos com a avaliacao maior do que 7\t4. Media de ventos por cidade\n");
                 printf("\t2. Seguir na ordem das cidades\t\t\t5. Sair\n");
                 printf("\t3. Cidades com mais eventos\n");
                 printf("\nEscolha: ");
