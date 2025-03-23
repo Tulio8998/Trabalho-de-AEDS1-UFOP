@@ -399,12 +399,12 @@ void Media_eventos_cidades(TCel* x) {
     Media_eventos_cidades(x->dir);
 }
 
-TCel *Minimo(TCel *x){         
+TCel *Minimo(TCel *x){
     if(x == NULL){
         return NULL;
     }
-    while(x->esq != NULL){     
-        x = x->esq;            
+    while(x->esq != NULL){
+        x = x->esq;
     }
     return x;
 }
@@ -1263,7 +1263,7 @@ int main() {
                             break;
                         case 3:
                             printf("\n===============================================================================================================");
-                            printf("\n\t\t\t\tuantidade de eventos por cidade");
+                            printf("\n\t\t\t\tQuantidade de eventos por cidade");
                             printf("\n===============================================================================================================");
                             Contar_eventos(arvore.raiz);
                             printf("\n===============================================================================================================\n\n");
@@ -1274,7 +1274,7 @@ int main() {
                             printf("\n===============================================================================================================");
                             Media_eventos_cidades(arvore.raiz);
                             printf("===============================================================================================================\n\n");
-                            break; 
+                            break;
                         case 5:
                             printf("\nVoltando para o menu principal\n");
                             printf("===============================================================================================================\n");
